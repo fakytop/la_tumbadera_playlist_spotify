@@ -34,40 +34,50 @@ def get_date(date):
     date_time = datetime.strptime(date,"%Y-%m-%d")
     return date_time.date()
 
-def add_filtered_albums_between_dates(filtered_list,album,album_date,newest_date,oldest_date):
+def add_filtered_albums_between_dates(filtered_list,album,album_date,newest_date,oldest_date,unique_ids_albums):
     if album_date >= oldest_date and album_date <= newest_date:
         filtered_list.append(album)
         print(f"💾 Album [{album["name"]}] guardado con éxito. Fecha de lanzamiento: {album_date}")
+        unique_ids_albums.add(album["id"])
     else:
         print(f"🚫 El álbum [{album["name"]}] no fue guardado. La fecha de lanzamiento: {album_date} no está comprendida entre [{newest_date} - {oldest_date}]")
 
-def get_albums_between_dates(albums,newest_time,oldest_time):
+def get_albums_between_dates(albums,newest_time,oldest_time,unique_ids_albums):
     filtered_albums = []
     for album in albums: 
-        if album["release_date_precision"] == 'day':
-            album_date = get_date(album["release_date"])
-            add_filtered_albums_between_dates(filtered_albums,album,album_date,newest_time,oldest_time)
-        elif album["release_date_precision"] == 'year':
-            add_filtered_albums_between_dates(filtered_albums,album,album["release_date"],newest_time.year(),oldest_time.year())
+        if album["id"] not in unique_ids_albums:
+            if album["release_date_precision"] == 'day':
+                album_date = get_date(album["release_date"])
+                add_filtered_albums_between_dates(filtered_albums,album,album_date,newest_time,oldest_time,unique_ids_albums)
+            elif album["release_date_precision"] == 'year':
+                add_filtered_albums_between_dates(filtered_albums,album,int(album["release_date"]),newest_time.year,oldest_time.year,unique_ids_albums)
+            else:
+                print(f"⛔ Precision de fecha mal definida. Álbum: [{album["name"]}] - [{album["release_date"]}]")
         else:
-            print(f"⛔ Precision de fecha mal definida. Álbum: [{album["name"]}] - [{album["release_date"]}]")
+            print(f"⛔ El álbum ya fue agregado a las listas. Álbum: [{album["name"]}] - [{album["release_date"]}]")
     return filtered_albums
 
-def get_filtered_albums(albums,newest_time,oldest_time):
-    return get_albums_between_dates(albums,newest_time,oldest_time)
+def get_filtered_albums(albums,newest_time,oldest_time,unique_ids_albums):
+    return get_albums_between_dates(albums,newest_time,oldest_time,unique_ids_albums)
 
-def analyze_dates_releases(albums,newest_releases,last_three_months_releases,last_three_years_releases):
+def analyze_dates_releases(albums,newest_releases,last_three_months_releases,last_three_years_releases,unique_ids_albums):
     today = date.today()
     oldest_time = today - timedelta(days=15)
-    print("📈 Analizando los nuevos lanzamientos.")
-    newest_releases.extend(get_filtered_albums(albums,today,oldest_time))
+    print("-----------------------------------------------------------------------------------------")
+    print("📈                       ANALIZANDO NUEVOS LANZAMIENTOS")
+    print("-----------------------------------------------------------------------------------------")
+    newest_releases.extend(get_filtered_albums(albums,today,oldest_time,unique_ids_albums))
 
     today = oldest_time - timedelta(days=1)
     oldest_time = today - timedelta(days=90)
-    print("📈 Analizando los lanzamientos de los últimos 3 meses.")
-    last_three_months_releases.extend(get_filtered_albums(albums,today,oldest_time))
+    print("-----------------------------------------------------------------------------------------")
+    print("📈               ANALIZANDO LOS LANZAMIENTOS DE LOS ÚLTIMOS 3 MESES.")
+    print("-----------------------------------------------------------------------------------------")
+    last_three_months_releases.extend(get_filtered_albums(albums,today,oldest_time,unique_ids_albums))
 
     today = oldest_time -timedelta(days=1)
     oldest_time = today - timedelta(days=1095)
-    print("📈 Analizando los lanzamientos de los últimos 3 años.")
-    last_three_years_releases.extend(get_filtered_albums(albums,today,oldest_time))
+    print("-----------------------------------------------------------------------------------------")
+    print("📈               ANALIZANDO LOS LANZAMIENTOS DE LOS ÚLTIMOS 3 AÑOS.")
+    print("-----------------------------------------------------------------------------------------")
+    last_three_years_releases.extend(get_filtered_albums(albums,today,oldest_time,unique_ids_albums))
