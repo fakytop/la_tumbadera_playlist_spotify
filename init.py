@@ -35,27 +35,27 @@ artists = [
 ]
 
 newest_releases = []
-last_three_months_releases = []
-last_three_years_releases = []
+last_month_releases = []
+last_year_releases = []
 unique_ids_albums = set()
 
 for artist in artists:
     albums = get_albums_from_artist(URL_BASE,artist,token)
-    analyze_dates_releases(albums,newest_releases,last_three_months_releases,last_three_years_releases,unique_ids_albums)
+    analyze_dates_releases(albums,newest_releases,last_month_releases,last_year_releases,unique_ids_albums)
 
 
 folder_name = "responses_api"
 os.makedirs(folder_name,exist_ok=True)
 
 newest_filepath=os.path.join(folder_name,"newest_releases.json")
-last_months_filepath=os.path.join(folder_name,"last_three_months_releases.json")
-last_years_filepath=os.path.join(folder_name,"last_three_years_releases.json")
+last_months_filepath=os.path.join(folder_name,"last_month.json")
+last_years_filepath=os.path.join(folder_name,"last_year.json")
 
 with open(newest_filepath,"w",encoding="utf-8") as f:
     json.dump(newest_releases,f,indent=4,ensure_ascii=False)
     
 with open(last_months_filepath,"w",encoding="utf-8") as f:
-    json.dump(last_three_months_releases,f,indent=4,ensure_ascii=False)
+    json.dump(last_month_releases,f,indent=4,ensure_ascii=False)
     
 with open(last_years_filepath,"w",encoding="utf-8") as f:
-    json.dump(last_three_years_releases,f,indent=4,ensure_ascii=False)
+    json.dump(last_year_releases,f,indent=4,ensure_ascii=False)
