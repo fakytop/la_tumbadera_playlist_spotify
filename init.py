@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 from methods.get_token import get_token
 from methods.get_albums import get_albums_from_artist
 from methods.get_albums import analyze_dates_releases
+from methods.get_tracks import get_tracks_from_albums
 
 load_dotenv()
 
@@ -34,28 +35,23 @@ artists = [
     ,'6bOZtDVI19rOqC4NWihcea' # Los Pikantes
 ]
 
-newest_releases = []
-last_month_releases = []
-last_year_releases = []
+last_releases = []
 unique_ids_albums = set()
+all_albums = []
 
 for artist in artists:
     albums = get_albums_from_artist(URL_BASE,artist,token)
-    analyze_dates_releases(albums,newest_releases,last_month_releases,last_year_releases,unique_ids_albums)
+    analyze_dates_releases(albums,last_releases,unique_ids_albums)
 
+last_releases.sort(key=lambda x: x["release_date"],reverse=True)
+
+get_tracks_from_albums(last_releases,URL_BASE,token)
 
 folder_name = "responses_api"
 os.makedirs(folder_name,exist_ok=True)
 
-newest_filepath=os.path.join(folder_name,"newest_releases.json")
-last_months_filepath=os.path.join(folder_name,"last_month.json")
-last_years_filepath=os.path.join(folder_name,"last_year.json")
+newest_filepath=os.path.join(folder_name,"last_releases.json")
 
 with open(newest_filepath,"w",encoding="utf-8") as f:
-    json.dump(newest_releases,f,indent=4,ensure_ascii=False)
+    json.dump(last_releases,f,indent=4,ensure_ascii=False)
     
-with open(last_months_filepath,"w",encoding="utf-8") as f:
-    json.dump(last_month_releases,f,indent=4,ensure_ascii=False)
-    
-with open(last_years_filepath,"w",encoding="utf-8") as f:
-    json.dump(last_year_releases,f,indent=4,ensure_ascii=False)
