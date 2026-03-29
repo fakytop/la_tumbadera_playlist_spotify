@@ -45,7 +45,7 @@ for artist in artists:
 
 last_releases.sort(key=lambda x: x["release_date"],reverse=True)
 
-get_tracks_from_albums(last_releases,URL_BASE,token)
+last_releases_info = get_tracks_from_albums(last_releases,URL_BASE,token)
 
 folder_name = "responses_api"
 os.makedirs(folder_name,exist_ok=True)
@@ -53,5 +53,5 @@ os.makedirs(folder_name,exist_ok=True)
 newest_filepath=os.path.join(folder_name,"last_releases.json")
 
 with open(newest_filepath,"w",encoding="utf-8") as f:
-    json.dump(last_releases,f,indent=4,ensure_ascii=False)
+    json.dump(last_releases_info,f,indent=4,ensure_ascii=False)
     
