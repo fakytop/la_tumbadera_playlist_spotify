@@ -60,24 +60,10 @@ def get_albums_between_dates(albums,newest_time,oldest_time,unique_ids_albums):
 def get_filtered_albums(albums,newest_time,oldest_time,unique_ids_albums):
     return get_albums_between_dates(albums,newest_time,oldest_time,unique_ids_albums)
 
-def analyze_dates_releases(albums,newest_releases,last_month_releases,last_year_releases,unique_ids_albums):
+def analyze_dates_releases(albums,last_releases,unique_ids_albums):
     today = date.today()
-    oldest_time = today - timedelta(days=7)
+    oldest_time = today - timedelta(days=1825) # 5 años
     print("------------------------------------------------------------------------------------------------------------------")
-    print("📈                       ANALIZANDO NUEVOS LANZAMIENTOS DE LA ÚLTIMA SEMANA")
+    print("📈                       ANALIZANDO NUEVOS LANZAMIENTOS DE LOS ÚLTIMOS 5 AÑOS")
     print("------------------------------------------------------------------------------------------------------------------")
-    newest_releases.extend(get_filtered_albums(albums,today,oldest_time,unique_ids_albums))
-
-    today = oldest_time - timedelta(days=1)
-    oldest_time = today - timedelta(days=51)
-    print("------------------------------------------------------------------------------------------------------------------")
-    print("📈                       ANALIZANDO LOS LANZAMIENTOS DEL ÚLTIMO MES Y MEDIO.")
-    print("------------------------------------------------------------------------------------------------------------------")
-    last_month_releases.extend(get_filtered_albums(albums,today,oldest_time,unique_ids_albums))
-
-    today = oldest_time -timedelta(days=1)
-    oldest_time = today - timedelta(days=435)
-    print("------------------------------------------------------------------------------------------------------------------")
-    print("📈                       ANALIZANDO LOS LANZAMIENTOS DEL ÚLTIMO AÑO Y MEDIO.")
-    print("------------------------------------------------------------------------------------------------------------------")
-    last_year_releases.extend(get_filtered_albums(albums,today,oldest_time,unique_ids_albums))
+    last_releases.extend(get_filtered_albums(albums,today,oldest_time,unique_ids_albums))
