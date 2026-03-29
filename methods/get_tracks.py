@@ -38,3 +38,31 @@ def get_tracks_from_albums(albums,url_base,token):
             response = response.json()
             get_tracks_info(response, total_tracks_info)
     return total_tracks_info
+
+def get_track_info_from_ids(ids,url_base,token):
+    headers = {
+        "Authorization": token
+    }
+
+    total_tracks_info = []
+
+    get_str_tracks = ""
+    total_tracks = ids.__len__()
+    print(f"🔍 Total de tracks a consultar: {total_tracks}")
+    counter = 0
+    for track_id in ids:
+        if counter < 50 and counter < total_tracks:
+            if counter == 0:
+                get_str_tracks += f"{track_id}"
+            else:
+                get_str_tracks += f",{track_id}"
+            counter += 1
+        if counter == 50 or counter == total_tracks:
+            total_tracks -= counter
+            print(f"🔍 Consultando {counter} tracks. Restantes: {total_tracks}")
+            counter = 0
+            response = requests.get(f'{url_base}tracks?ids={get_str_tracks}&market=UY',headers=headers)
+            get_str_tracks = ""
+            response = response.json()
+            total_tracks_info.extend(response["tracks"])
+    return total_tracks_info

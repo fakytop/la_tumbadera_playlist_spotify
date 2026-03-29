@@ -14,7 +14,7 @@ def get_albums_from_artist(url_base,artist_id,token):
     try:
         while offset < total:
             print(f"Se consulta a partir del album nro: {offset}")
-            response = requests.get(url = f"{url_base}artists/{artist_id}/albums?include_groups=album%2Csingle%2Cappears_on%2Ccompilation&market=UY&limit=50&offset={offset}", headers=headers)
+            response = requests.get(url = f"{url_base}artists/{artist_id}/albums?include_groups=album%2Csingle&market=UY&limit=50&offset={offset}", headers=headers)
             response.raise_for_status()
             response = response.json()
             if total == 1:
